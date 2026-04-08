@@ -1,42 +1,43 @@
-# WGAN-GP for High-Fidelity Financial Transaction Synthesis
+Statistical Reinforcement Learning Agent for Rare Earth Element Exchange
+📌 Project Overview
+This project implements an autonomous Statistical Analyst Agent designed to navigate the highly volatile and complex market of Rare Earth Elements (REE). By integrating traditional time-series forecasting with modern unsupervised anomaly detection and Reinforcement Learning (Q-Learning), the system simulates intelligent decision-making in a multi-agent environment.
+The architecture focuses on two primary objectives:
+1. Risk Mitigation: Identifying market manipulation or flash crashes using isolation forests.
+2. Strategic Optimization: Learning optimal entry and exit points through iterative state-reward cycles.
+🏗️ System Architecture
+1. The Communication Hub
+To simulate a realistic exchange environment, the system utilizes a Publish-Subscribe (Pub-Sub) communication model.
+* Channels: Agents subscribe to specific asset classes (e.g., Neodymium, Dysprosium).
+* Decoupling: The hub ensures that the sender and receiver of market signals remain independent, allowing for scalable multi-agent simulations.
+2. Statistical Analysis & Trend Identification
+The agent processes raw market data using Holt-Winters Exponential Smoothing via the statsmodels library.
+* Trend Component: The model utilizes an additive trend to generate a Smooth Moving Average (SMA), filtering out high-frequency noise from the underlying commodity price movement.
+3. Anomaly Detection (The Risk Engine)
+A critical feature for commodity exchange is the detection of non-standard market behavior.
+* Algorithm: IsolationForest.
+* Functionality: By standardizing price features and measuring "isolation scores," the agent can identify outliers (anomalies) with a configured contamination factor (default 5%).
+* Actionable Intelligence: When an anomaly is detected, the agent is programmed to generate 'Sell' or 'Hold' signals to protect the portfolio.
+4. Reinforcement Learning (Q-Learning)
+The agent features a custom implementation of a Q-Learning algorithm to optimize its trading policy over time.
+* Q-Table: Maps state-action pairs to expected future rewards.
+* Bellman Equation: Utilizes a learning rate ($\alpha$) and discount factor ($\gamma$) to update values based on market feedback.
+* Exploration vs. Exploitation: Implements an $\epsilon$-greedy strategy to ensure the agent continues to discover new market patterns while capitalizing on known profitable states.
+⚙️ Technical Stack
+* Data Handling: pandas, numpy
+* Modeling: scikit-learn (Isolation Forest), statsmodels (Exponential Smoothing)
+* Simulation: Custom Python class-based event loop.
+🚀 Usage Simulation
+The provided script includes a simulation bootstrap using synthetic Rare Earth Element data.
+Python
 
-## 📌 Project Overview
-This repository implements a specialized **Wasserstein GAN with Gradient Penalty (WGAN-GP)** designed to generate high-fidelity synthetic financial transaction data. [cite_start]The architecture is engineered to capture complex, high-dimensional distributions and multivariate relationships inherent in transaction systems while ensuring data privacy. [cite: 1330, 1612]
+# Initialize the exchange hub and agent
+hub = CommunicationHub()
+agent = StatisticalAnalystAgent(asset_class="Rare_Earth_Elements", communication_hub=hub)
 
-[cite_start]The model is designed to produce synthetic datasets that maintain a **1:1 distribution match** with original data, providing a robust, anonymous alternative for training downstream machine learning models. [cite: 1221, 1450]
+# Simulate a 10-day trading window
+agent.simulate_trading(rare_earth_elements_data)
+⚠️ Disclaimer
+This repository is a simulation framework for academic and research purposes. It is intended to showcase the integration of reinforcement learning and statistical anomaly detection in commodity market contexts and does not constitute financial advice.
 
-## 🏗️ Repository Structure
-* [cite_start]`train_wgan.py`: The core training script utilizing WGAN-GP architecture to optimize Earth Mover’s distance. [cite: 1341, 1607]
-* [cite_start]`validate_gan.py`: A comprehensive statistical validation pipeline to verify the fidelity of the generated data. [cite: 1613, 1621]
 
-## ⚙️ Model Architecture & Hyperparameters
-### Generator
-* [cite_start]**Structure:** 3-layer Dense architecture (2048 -> 1024 -> 512 units). [cite: 1586, 1607]
-* [cite_start]**Techniques:** Utilizes `HeNormal` initialization, `LeakyReLU` (alpha=0.2), and `BatchNormalization` for stable gradient flow. [cite: 1607, 1609]
-* [cite_start]**Output:** Linear activation to match standardized feature scales. [cite: 1586, 1607]
 
-### Discriminator (Critic)
-* [cite_start]**Structure:** 3-layer Dense architecture (512 -> 256 -> 128 units). [cite: 1586, 1608]
-* [cite_start]**Regularization:** Employs `Dropout` (0.3) to prevent overfitting. [cite: 1586, 1608]
-
-### Training Parameters
-| Parameter | Value |
-| :--- | :--- |
-| **Latent Dimension** | 128 |
-| **Gradient Penalty (GP) Weight** | 30 |
-| **Training Ratio** | 5 Critic updates per 1 Generator update |
-| **Adam Optimizer (G)** | Learning Rate: 0.0002, beta_1: 0.5 |
-| **Adam Optimizer (D)** | Learning Rate: 0.0001, beta_1: 0.5 |
-
-[cite_start][cite: 1587, 1609]
-
-## 🧪 Validation Pipeline
-To ensure the synthetic output is statistically indistinguishable from real data, the following tests are implemented in `validate_gan.py`:
-1.  [cite_start]**Kolmogorov-Smirnov (KS) Test:** To ensure univariate similarity (Target p-value >= 0.05). [cite: 1614, 1620]
-2.  [cite_start]**Wasserstein Distance:** Quantifying the distance between real and synthetic probability distributions. [cite: 1614, 1620]
-3.  [cite_start]**Dimensionality Reduction:** **PCA** and **t-SNE** projections to verify the preservation of high-dimensional clusters and patterns. [cite: 1614, 1615, 1620]
-4.  [cite_start]**KDE Comparison:** Visualizing probability density overlap across all features. [cite: 1615]
-5.  [cite_start]**Correlation Matrix:** Ensuring the multivariate relationships (Pearson coefficients) are preserved within a 0.05 margin. [cite: 1614]
-
-## ⚠️ Data Usage & Privacy
-**The original training dataset is not included in this repository.** This project is focused on the implementation and validation of the GAN architecture. Users must provide their own preprocessed transaction data in CSV format as specified in the configuration section of the scripts.
